@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Acupuncture & Pain Management Center • Palm Coast Acupuncture</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Welcome to the Acupuncture & Pain Management Center. We have 20 years of experience serving the Central Florida Region. Visit us today for pain relief.">
+	<meta name="keywords" content="Acupuncture, Pain Management, alternative medicine, Youchang Hu, Dr. Hu, Palm Coast, Volusia, Flagler" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0;">
+	<meta name="msapplication-TileColor" content="#DA532C" />
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+	<link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+	<link rel="icon" type="image/png" href="/favicon-196x196.png" sizes="196x196" />
+	<link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160" />
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="waypoints.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			/* ------------------- */
+			/* Site initialization */
+			/* ------------------- */
+			$('.panel:first-child').css('z-index', '5');
+			$('.map-button').css('display', 'inline-block');
+			$('#pan-zoomed').addClass('map-button-active');
+			
+			/* --------------------------- */
+			/* Mobile collapsible sections */
+			/* --------------------------- */
+			var isMobile = false;
+			if ($('html').css('position') == 'relative'){ isMobile = true; } //Media query sets position to relative on mobile devices
+			
+			if (isMobile){
+				// We allow the header to remain visible now
+				$('.panel:first-child').css('padding-bottom', '40px');
+				$('.panel:first-child').css('height', 'auto');
+			}
+			
+			// Initialize Collapsible Panels (Mobile Only)
+			$('.panel-title').each(function(){
+				if (!isMobile){ return; }
+				
+				// MODIFICATION: Do NOT collapse the Map panel. 
+				// This ensures map buttons are always visible.
+				if ($(this).text().indexOf('Map') !== -1) { return; }
+
+				var titleHeight = $(this).height();
+				$(this).parent().css('height', titleHeight + 10 + 'px');
+			});
+			
+			$('.panel-title').click(function(){
+				if (!isMobile){ return; }
+				
+				var titleHeight = $(this).height();
+				// Toggle height between Title-Only and Auto (Expanded)
+				if ($(this).parent().height() <= titleHeight + 10){
+					$(this).parent().css('height', 'auto');
+				} else {
+					$(this).parent().height(titleHeight - 3);
+				}
+			});
+			
+			/* ----------- */
+			/* Leaflet Maps (Replaces Google Maps) */
+			/* ----------- */
+			
+			// Coordinates
+			// var zoomedCoords = [29.362871,-81.1186765];
+			var zoomedCoords = [29.554589,-81.236148];
+			var flaglerCoords = [29.554589,-81.236148];
+			//var daytonaCoords = [29.171153,-81.001205]; 
+
+			// Initialize Map
+			var map2 = L.map('map_flagler', {
+				scrollWheelZoom: false
+			}).setView(zoomedCoords, 10);
+
+			// Add OpenStreetMap Tiles
+			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			}).addTo(map2);
+			
+			// Add Marker
+			var marker2 = L.marker(flaglerCoords).addTo(map2);
+			
+			/* ------------------------------------ */
+			/* Scroll position and header animation */
+			/* ------------------------------------ */
+			$('.panel:first-child + .panel').waypoint(function(direction) {
+				if (direction == 'down'){
+					$('nav').animate({marginTop: '0'}, 500, 'swing');
+				} else {
+					$('nav').animate({marginTop: '-4.5em'}, 500, 'swing');
+				}
+			}, {offset: 300});
+			
+			/* ----------- */
+			/* Map buttons */
+			/* ----------- */
+			$('#pan-zoomed').click(function(e){
+				e.preventDefault();
+				map2.setView(zoomedCoords, 10);
+				$('.map-button').removeClass('map-button-active');
+				$(this).addClass('map-button-active');
+			});
+			// $('#pan-daytona').click(function(e){
+			// 	e.preventDefault();
+			// 	map2.setView(daytonaCoords, 13);
+			// 	$('.map-button').removeClass('map-button-active');
+			// 	$(this).addClass('map-button-active');
+			// });
+			$('#pan-flagler').click(function(e){
+				e.preventDefault();
+				map2.setView(flaglerCoords, 13);
+				$('.map-button').removeClass('map-button-active');
+				$(this).addClass('map-button-active');
+			});
+			
+			/* ---------------------- */
+			/* Link scroll animations */
+			/* ---------------------- */
+			$('a').click(function(e){
+				if ($(this).attr('href').indexOf('#') == 0){
+					e.preventDefault();
+					
+					var targetId = $(this).attr('href');
+					var $target = $(targetId);
+					
+					// MODIFICATION: Auto-expand the target section on mobile
+					if (isMobile) {
+						$target.find('.panel-inner').css('height', 'auto');
+					}
+
+					var scrollPosition = $target.offset().top;
+					
+					// Only subtract nav height if nav is actually visible (Desktop)
+					if ($('nav').is(':visible')) {
+						scrollPosition -= $('nav').height();
+					}
+					
+					$("html, body").animate({ scrollTop: scrollPosition + 'px'}, 1250);
+				}
+			});
+		});
+	</script>
+	<style type="text/css">
+		/* ----- */
+		/* Fonts */
+		/* ----- */
+		@font-face {
+			font-family: 'Montserrat';
+			src: url('fonts/montserrat-regular-webfont.eot');
+			src: url('fonts/montserrat-regular-webfont.eot?#iefix') format('embedded-opentype'),
+				 url('http://themes.googleusercontent.com/static/fonts/montserrat/v3/zhcz-_WihjSQC0oHJ9TCYBsxEYwM7FgeyaSgU71cLG0.woff') format('woff'),
+				 url('fonts/montserrat-regular-webfont.ttf') format('truetype'),
+				 url('fonts/montserrat-regular-webfont.svg#montserratregular') format('svg');
+			font-weight: 400;
+			font-style: normal;
+		}
+		@media screen and (-webkit-min-device-pixel-ratio:0) {
+			@font-face {
+				font-family: 'Montserrat';
+				src: url('fonts/montserrat-regular-webfont.svg#montserratregular') format('svg');
+			}
+		}
+		/* ---------------- */
+		/* Default elements */
+		/* ---------------- */
+		html{
+			position: static;
+		}
+		body{
+			background: #E9DAA6;
+			background: #754C23;
+			color: #222;
+			font-family: 'Lato';
+			font-size: 16px;
+			font-weight: 100 !important;
+			margin: 0;
+			padding: 0;
+		}
+		h1, h2, h3, h4{
+			font-family: 'Montserrat';
+			font-weight: normal;
+			margin: 0;
+			padding: 0;
+		}
+		h1{
+			font-size: 0;
+			position: absolute;
+			text-indent: -9999px;
+		}
+		h2{
+			font-size: 2em; /* 32px */
+			font-weight: normal;
+		}
+		h4{
+			font-size: 1.25em; /* 20px */
+			font-weight: normal;
+			margin: 0 0 .5em 0;
+			text-align: left;
+		}
+		p{
+			line-height: 1.6;
+		}
+		a{
+			color: #978236;
+			text-decoration: none;
+		}
+		a:hover{
+			color: #F4EBCD;
+		}
+		blockquote{
+			background: #F0E2B6;
+			border-left: 4px solid #D1C085;
+			line-height: 1.6em;
+			margin: 0 0 10px 0;
+			padding: 15px 40px;
+			position: relative;
+			text-align: left;
+		}
+		blockquote:before{
+			color: #978236;
+			content: "\201C";
+			font-family: Georgia, serif;
+			font-size: 60px;
+			left: -30px;
+			left: 8px;
+			position: absolute;
+			top: 10px;
+			top: 18px;
+		}
+		blockquote:after{
+			color: #978236;
+			content: "\201D";
+			font-family: Georgia, serif;
+			font-size: 60px;
+			position: absolute;
+			right: -25px;
+			right: 7px;
+			bottom: -15px;
+			bottom: -12px;
+		}
+		blockquote + span{
+			display: block;
+			margin: 0 40px 40px 40px;
+			margin: 0 40px 40px 10px;
+			text-align: left;
+		}
+		/* -------------- */ 
+		/* Top navigation */
+		/* -------------- */
+		nav{
+			background: #F4EBCD;
+			border-bottom: 1px solid #393421;
+			display: block;
+			height: 4.5em;
+			left: 0;
+			line-height: 4.5em;
+			margin-top: -4.5em;
+			overflow: hidden;
+			position: fixed;
+			text-transform: uppercase;
+			top: 0;
+			width: 100%;
+			z-index: 10;
+			
+		}
+		nav ul{
+			list-style: none;
+			margin: 0 auto;
+			padding: 0;
+			text-align: right;
+			width: 960px;
+		}
+		nav li{
+			display: inline-block;
+			margin: 0 0 0 1em;
+			padding: 0;
+		}
+		nav li:first-child{
+			float: left;
+			font-family: 'Montserrat';
+			font-weight: bold;
+			margin: 0;
+		}
+		nav ul li:first-child a{
+			font-size: 0;
+		}
+		nav ul li:first-child a:after{
+			content: " A&PMC";
+			font-size: 16px;
+		}
+		nav img{
+			display: inline-block;
+			height: 20px;
+			margin: -1px 0 0 0;
+			padding: 0;
+			vertical-align: middle;
+			width: 20px;
+		}
+		nav a{
+			color: #222;
+		}
+		nav a:hover{
+			color: #978236;
+		}
+		/* ------------ */
+		/* Content area */
+		/* ------------ */
+		.panel-inner{
+			margin: 0 auto;
+			overflow: hidden;
+			padding: 40px 0 50px 0;
+			position: relative;
+			width: 960px;
+		}
+		.panel-inner *:last-child{
+			margin-bottom: 0;
+		}
+		.panel-title-lines, .panel-title{
+			text-align: center;
+		}
+		.panel-title{
+			color: #242015;
+			font-size: 2em; /* 32px */
+			font-weight: normal;
+			margin: 0 0 1em 0;
+			padding: 0;
+			text-transform: uppercase;
+			-webkit-text-stroke: 1px rgba(0,0,0,0.1);
+		}
+		.panel-title-lines div, .panel-title span{
+			display: inline-block;
+			position: relative;
+		}
+		.panel-title-lines div:before, .panel-title-lines div:after, .panel-title span:before, .panel-title span:after{
+			border-bottom: 1px solid #242015;
+			content: "";
+			height: 5px;
+			position: absolute;
+			top: .2em;
+			width: 600px;
+		}
+		.panel-title span:before, .panel-title span:after{
+			top: .3em;
+		}
+		.panel-title-lines div:before, .panel-title span:before{
+			margin-right: .75em;
+			right: 100%;
+		}
+		.panel-title-lines div:after, .panel-title span:after{
+			left: 100%;
+			margin-left: .75em;
+		}
+		/* ----------- */
+		/* First panel */
+		/* ----------- */
+		.panel:first-child{
+			color: #FFF;
+			height: 900px;
+			text-shadow: 1px 1px 1px #111;
+			width: 100%;
+			-webkit-text-stroke: 1px rgba(0,0,0,0.3);
+			background-size: cover;
+			background-position: center center;
+		}
+		#home:before{
+    			background: rgba(0, 0, 0, .4);
+    		    	bottom: 0;
+        		content: '';
+        		display: block;
+        		left: 0;
+        		position: absolute;
+        		right: 0;
+        		top: 0;
+    		}
+    		#home .panel-inner{
+        		z-index: 5;
+    		}
+		.panel:first-child .panel-inner{
+			padding: 245px 0 0 0;
+			width: 820px;
+		}
+		.header-panel{
+			margin: 0 auto 80px auto;
+			width: 820px;
+		}
+		.header-image{
+			display: block;
+			margin: 0 auto;
+			padding: 0 0 6px 0;
+		}
+		.nav{
+			float:left;
+			font-family: 'Montserrat';
+			font-size: 1.1em;
+			overflow:hidden;
+			position:relative;
+			text-transform: uppercase;
+			width:100%;
+		}
+		.nav ul{
+			clear: left;
+			float: left;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			position: relative;
+			left: 50%;
+			text-align: center;
+		}
+		.nav ul li{
+			display: block;
+			float: left;
+			list-style: none;
+			margin: 0 0 0 1.25em;
+			padding: 0;
+			position: relative;
+			right: 50%;
+		}
+		.nav ul li:first-child{
+			margin: 0;
+		}
+		.nav a{
+			color: #F4EBCD;
+		}
+		.nav a:hover{
+			color: #978236;
+		}
+		.panel:first-child .panel-title-lines div:before, .panel:first-child .panel-title-lines div:after{
+			border-bottom: 1px solid #FFF;
+		}
+		.intro-big, .intro{
+			font-family: 'Montserrat';
+			line-height: 1.75;
+			margin: 0;
+			padding: 0;
+		}
+		.intro-big{
+			display: block;
+			font-size: 2.75em;
+			font-size: 2.3em;
+			line-height: 1.25em;
+		}
+		.intro{
+			font-size: 1.5em;
+		}
+		/* -------------------- */
+		/* Fallback backgrounds */
+		/* -------------------- */
+		.panel:first-child{
+			background-image: url(bamboobg.jpg);
+			position: relative;
+			z-index: 15;
+		}
+		.panel:first-child + .panel{
+			background: #B3A268;
+		}
+		.panel:first-child + .panel + .panel{
+			background: #C2B177;
+		}
+		.panel:first-child + .panel + .panel + .panel{
+			background: #D1C085;
+		}
+		.panel:first-child + .panel + .panel + .panel + .panel{
+			background: #E9DAA6;
+		}
+		.panel:first-child + .panel + .panel + .panel + .panel + .panel{
+			background: #F4E8BF;
+		}
+		.panel:first-child + .panel + .panel + .panel + .panel + .panel + .panel{
+			background: #F4EBCD;
+		}
+		/* ----------- */
+		/* Grid system */
+		/* ----------- */
+		.column-third{
+			background: #E9DAA6;
+			border-radius: 1px;
+			box-shadow: 0 0px 1px 0px #555;
+			float: left;
+			margin: 2em 0 0 40px;
+			min-height: 212px;
+			padding: 5px;
+			width: 282px;
+		}
+		.panel-title + .column-third,
+		.panel-title + .column-third + .column-third + .column-third + .column-third{
+			margin: 2em 0 0 2px;
+			padding: 5px 8px;
+			width: 276px;
+		}
+		.panel-title + .column-third,
+		.panel-title + .column-third + .column-third,
+		.panel-title + .column-third + .column-third + .column-third{
+			margin-top: 0;
+		}
+		.column-third img{
+			display: block;
+		}
+		.panel-inner .column-third:nth-child(5){
+			clear: left;
+		}
+		.column-one-third-wrapper{
+			float: left;
+			width: 300px;
+		}
+		.column-one-third-wrapper .column-third{
+			margin: 2em 0 0 2px;
+		}
+		.column-one-third-wrapper .column-third:first-child{
+			margin: 0 0 0 2px;
+		}
+		.column-two-thirds{
+			display: block;
+			float: right;
+			margin: 0 0 0 40px;
+			text-align: justify;
+			width: 620px;
+		}
+		.column-two-thirds p:first-child{
+			margin-top: 0;
+		}
+		/* ------------- */
+		/* Extra classes */
+		/* ------------- */
+		.scroll-message{
+			font-size: 1em;
+			margin: 80px 0 0 0;
+		}
+		.scroll-message a{
+			color: #FFF;
+		}
+		.scroll-message .fa{
+			font-size: .75em;
+			margin: 0 0 0 .25em;
+		}
+		.schema-name, .schema-description{
+			display: none;
+		}
+		.map-button{
+			background: #99632E;
+			border-bottom: 4px solid #99632E;
+			border-top: 4px solid #99632E;
+			color: #F4EBCD;
+			color: #E9DAA6;
+			display: inline-block;
+			display: none;
+			height: 2.25em;
+			line-height: 2.25em;
+			margin: 0 0 10px 10px;
+			padding: 0;
+			text-align: center;
+			width: 10em;
+		}
+		.map-button:hover{
+			color: #FFF;
+		}
+		#pan-zoomed{
+			margin: 0 0 10px 0;
+		}
+		.map-button-active{
+			border-bottom: 4px solid #393421;
+		}
+		.google_map{
+			background: #FFF;
+			box-shadow: 0 0px 2px 0px #555;
+			float: left;
+			margin: 0 0 40px 1px;
+			height: 450px;
+			width: 100%; /* Changed from 958px for responsiveness */
+			max-width: 958px; /* Added to constrain max size on desktop */
+		}
+		.text-left{
+			display: block;
+			float: left;
+			margin: 0 40px 0 0;
+			text-align: justify;
+			width: 460px;
+		}
+		.text-right{
+			display: block;
+			float: left;
+			margin: 0;
+			text-align: justify;
+			width: 460px;
+		}
+		.text-left p:first-child, .text-right p:first-child{
+			margin-top: 0;
+		}
+		.column-half{
+			float: left;
+			width: 50%;
+		}
+		.centered{
+			text-align: center;
+		}
+		.clearer:before, .clearer:after{
+			content: "";
+			display: table;
+		}
+		.clearer:after{
+			clear: both;
+		}
+		.clearer{
+			zoom: 1; /* IE 6 & 7 */
+		}
+		
+		.horizontal-list{
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			text-align: justify;
+			text-align: center;
+		}
+		.horizontal-list li{
+			display: inline-block;
+			margin: 0;
+			padding: 0;
+			text-align: center;
+			vertical-align: top;
+			width: 33%;
+		}
+		.horizontal-list .icon-wrapper{
+			display: inline-block;
+			height: 70px;
+			line-height: 70px;
+			margin: 0 0 1.5em 0;
+			position: relative;
+			vertical-align: middle;
+			width: 70px;
+		}
+		.horizontal-list .fa{
+			font-size: 32px;
+			font-size: 2em;
+			display: block;
+			height: 70px;
+			left: 0;
+			position: absolute;
+			text-align: center;
+			top: 23px;
+			width: 70px;
+			z-index: 15;
+		}
+		.horizontal-list .fa-circle{
+			color: #99632E;
+			font-size: 80px;
+			top: 0;
+			z-index: 10;
+		}
+		.horizontal-list .contact-info{
+			display: block;
+		}
+		.horizontal-list .contact-info + .contact-info{
+			margin: 1.5em 0 0 0;
+		}
+		.horizontal-list:after{
+			content: '';
+			display: inline-block;
+			width: 100%;
+		}
+		.email{
+			display: none;
+		}
+		.checklist-image{
+			background: #F4E8BF;
+			box-shadow: 0 0px 1px 0px #555;
+			display: inline-block;
+			margin: 0 0 0 2px;
+			padding: 5px;
+		}
+		.checklist-image img{
+			display: block;
+		}
+		.checklist{
+			display: inline-block;
+			list-style: none;
+			margin: 2em 0 0 15px;
+			max-width: 220px;
+			min-width: 180px;
+			padding: 0;
+		}
+		.checklist-image + .checklist{ /* First of type */
+			margin: 2em 0 0 40px;
+		}
+		.checklist li{
+			line-height: 1.6;
+			margin: 0;
+			padding: 0;
+		}
+		.checklist li:before{
+			content: '\F00C';
+			font-family: 'FontAwesome';
+			margin: 0 .5em 0 0
+		}
+	</style>
+	<style type="text/css">
+		@media only screen
+		and (min-device-width : 320px)
+		and (max-device-width : 480px){
+			html{
+				position: relative;
+				-webkit-text-size-adjust: 100%;
+			}
+			body{
+				font-size: 12px;
+			}
+			nav{
+				display: none;
+				text-transform: none;
+			}
+			.panel, .panel-inner, .column-third{
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+			.panel{
+				padding: 0 10px;
+				width: 100%;
+			}
+			.panel-inner, .panel:first-child .panel-inner{
+				padding: 10px 0;
+				width: 100%;
+			}
+			.panel:first-child{
+				height: auto;
+				text-shadow: 0 0 0 none;
+			}
+			.panel-title-lines div:before, .panel-title-lines div:after, .panel-title span:before, .panel-title span:after{
+				width: 0;
+			}
+			.panel-title{
+				text-align: left;
+			}
+			.panel-title:before{
+				content: '\F078';
+				font-family: 'FontAwesome';
+				font-size: .8em;
+				line-height: 1em;
+				margin-right: .5em;
+			}
+			.header-panel{
+				margin: 0 auto 60px auto;
+				padding: 20px 0;
+				width: 100%;
+			}
+			.header-image{
+				margin-bottom: 1.5em;
+				width: 100%;
+			}
+			.nav ul li{
+				display: block;
+				float: none;
+				margin: 1.5em 0;
+				text-align: center;
+				width: 100%;
+			}
+			.nav ul li a{
+				background: #99632E;
+				display: block;
+				padding: .5em;
+				text-shadow: none;
+				width: 100%;
+			}
+			.header-panel + div, .intro-big, .intro{
+				display: none;
+			}
+			.column-third{
+				display: inline-block;
+				margin: 1em 0 0 0;
+				min-height: 0;
+				width: 100%;
+			}
+			/*.panel-title + .column-third,
+			.panel-title + .column-third + .column-third + .column-third + .column-third,
+			.column-third:nth-of-type(3n+1){
+				margin: 1em 0 0 0;
+				padding: 5px 8px;
+				width: 100%;
+			}*/
+			.panel-title + .column-third,
+			.panel-title + .column-third + .column-third + .column-third + .column-third,
+			.column-third:nth-of-type(3n+1){
+				margin: 1em 0 0 0;
+				padding: 5px 8px;
+				width: 100%;
+			}
+			.panel-title + .column-third,
+			.panel-title + .column-third + .column-third,
+			.panel-title + .column-third + .column-third + .column-third{
+				margin-top: 1em;
+			}
+			.column-third img{
+				width: 100%;
+			}
+			.column-two-thirds{
+				margin: 0;
+				width: 100%;
+			}
+			.text-left, .text-right{
+				margin: inherit;
+				width: 100%;
+			}
+			.text-left p:first-child, .text-right p:first-child{
+				margin: 1em 0 0 0;
+			}
+			.profile-quote{
+				display: none;
+			}
+			.map-button{
+				margin: 0 0 10px 0;
+			}
+			#pan-zoomed{
+				margin: 0 0 10px 0;
+			}
+			.google_map{
+				display: block; /* Changed from none to block */
+				height: 300px; /* Added height for mobile visibility */
+				width: 100%; /* Ensure full width on mobile */
+			}
+			.horizontal-list li{
+				margin: 1.5em 0 0 0;
+				width: 100%;
+			}
+			.horizontal-list li:first-child{
+				margin: 0;
+			}
+			.horizontal-list .fa{
+				font-size: 32px;
+			}
+			.horizontal-list .fa-circle{
+				font-size: 80px;
+			}
+		}
+		@media only screen 
+		and (max-width : 320px) {
+			.map-button{
+				display: block;
+				margin: 0 0 10px 0;
+			}
+		}
+	</style>
+	</head>
+<body>
+	<nav class="top-nav">
+		<ul>
+			<li><img src="yinyang.svg" alt="Yin Yang" width="20" height="20" /><a href="#home">Home</a></li>
+			<li><a href="#why">Why choose us?</a></li>
+			<li><a href="#location">Location</a></li>
+			<li><a href="#how">How it works</a></li>
+			<li><a href="#reviews">Reviews</a></li>
+			<li><a href="#contact">Contact</a></li>
+		</ul>
+	</nav>
+	<div class="content">
+		<div class="panel panel-1" id="home">
+			<div class="panel-inner">
+				<div class="header-panel clearer">
+					<h1>Palm Coast Acupuncture</h1>
+					<img src="banner.png" class="header-image" alt="Acupuncture & Pain Management Center" />
+					<div class="nav">
+						<div class="panel-title-lines">
+							<div>
+								<ul>
+									<li><a href="#why">Why choose us?</a></li>
+									<li><a href="#location">Location</a></li>
+									<li><a href="#how">How it works</a></li>
+									<li><a href="#reviews">Reviews</a></li>
+									<li><a href="#contact">Contact</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="centered">
+					<span class="intro-big">Are you suffering from chronic pain?</span>
+					<p class="intro">Let us help. Call or visit us today for a free consultation.</p>
+					<p class="scroll-message"><a href="#why">Scroll down for more <i class="fa fa-chevron-down"></i></a></p>
+				</div>
+			</div>
+		</div>
+		<div class="panel" id="why">
+			<div class="panel-inner">
+				<h2 class="panel-title"><span>Why choose us?</span></h2>
+				<div class="column-one-third-wrapper">
+					<div class="column-third" style="background: #D1C085;">
+						<img src="YouchangHu.jpg" alt="" />
+					</div>
+					<div class="column-third" style="background: #D1C085;">
+						<img src="KunningLi.jpg" alt="" />
+						</div>
+				</div>
+				<div class="column-two-thirds">
+					<p>At the Acupuncture & Pain Management Center, we combine knowledge of medicine with eastern healing techniques. With over 30 years of experience in the Central Florida area alone, we know our community and we're here to help. Our location serves both Volusia County and Flagler County, primarily encompassing the greater Central Florida area.</p>
+					<p>Dr. Hu or Dr. Li our licensed acupuncture physicians, meet with each patient individually to personalize a treatment plan. We discuss the patient's condition, explain the procedure, and administer acupuncture over multiple treatments to ensure that the procedure is effective.</p>
+					<p>Dr. Hu is a Doctor of Oriental Medicine who completed his training at the Shanghai University of Traditional Chinese Medicine in China. He has been an acupuncture physician for more than 40 years and has been practicing in the Central Florida area since 1993. He was dean and professor of TCM from 1993-1997 at the National Institute of Oriental Medicine in Orlando. He is currently a visiting professor at Atlantic Institute of Oriental Medicine. Dr. Hu integrates eastern and western medical knowledge, using needle and no-needle electrical acupuncture and Chinese herbal medicine to treat chronic and complex cases. He has written and co-authored many articles and books and has also had life-long training and teaching in Tai Chi, Qi Gong, and Chinese Kung-Fu.</p>
+					<p>Dr. Li, a Doctor of Oriental Medicine, studied TCM at the Liao Ning University in China. Dr. Li practiced as an intern at the TCM Hospital in Dalian City, China, where she focused on Neurology and Gynecology. She then studied at the Florida School of Integrative Medicine and received her Bachelor Degree in Professional Health Studies and her Master of Science Degree in Oriental Medicine in June 2014. Dr. Li joined the Acupuncture & Pain Management Center in July 2014.</p>
+
+				</div>
+				<div class="clearer"></div>
+			</div>
+		</div>
+		<div class="panel" id="location">
+			<div class="panel-inner">
+				<h2 class="panel-title"><span>Location</span></h2>
+<div class="column-third" itemscope itemtype="http://schema.org/LocalBusiness">
+					<h4>Palm Coast Office</h4>
+					<span class="schema-name" itemprop="name">
+						Acupuncture & Pain Management Center of Palm Coast
+					</span>
+					<span class="schema-description" itemprop="description">
+						An acupuncture office in Palm Coast that also specializes in traditional Chinese medicine
+					</span>
+					<p>
+						<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+						<span itemprop="streetAddress">50 Leanni Way</span><br />
+						Unit #A2<br />
+						<span itemprop="addressLocality">Palm Coast</span>, 
+						<span itemprop="addressRegion">FL</span> 32137<br />
+						</span>
+						<span itemprop="telephone">Phone: (386) 445-0098</span>
+					</p>
+					<p>
+						<meta itemprop="openingHours" content="Tu,Th 9:30-17:30">
+						Tuesday, 9:30 AM to 5:30 PM<br />
+						Thursday, 9:30 AM to 5:30 PM
+					</p>
+				</div>
+				<div class="column-third">
+					<img src="PC1.jpg" alt="" />
+				</div>
+				<div class="column-third">
+					<img src="PC2.jpg" alt="" />
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div class="panel-inner centered">
+				<h2 class="panel-title"><span>Location: Map</span></h2>
+				<a href="#" id="pan-zoomed" class="map-button">Zoomed Out</a>
+				<a href="#" id="pan-flagler" class="map-button clearer">Palm Coast</a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=29.554589,-81.236148" target="_blank" class="map-button clearer" style="margin-left: 10px;">Get Directions</a>
+				<div id="map_flagler" class="google_map clearer"></div>
+			</div>
+		</div>
+		<div class="panel" id="how">
+			<div class="panel-inner">
+				<h2 class="panel-title"><span>How it works</span></h2>
+				<div class="text-left">
+					<p>Acupuncture is powerful medicine which aids in strengthening the immune system and prevents disease, controls pain, and increases the quality of people's lives. Acupuncture is a well developed whole health care system based on natural energetic laws. Dating back over 3,000 years as a primary health care system in China, acupuncture is widespread in Asia, Europe, and now the U.S.</p>
+					<p>As a system of medicine it uses natural laws and energetics with the application of needles and pressure to specific "points" on the body. These points are grouped along certain pathways or meridians that cross the body.</p>
+					<p>As long as the energy flows freely through these pathways, health is maintained. When the flow of energy is either absent, deficient, interrupted, excessive or blocked in an area, health is disrupted, resulting in illness or pain. By stimulating appropriate acupuncture points along these meridians, the energy is released and regulated, and health is restored.</p>
+					<p>Studies indicate that acupuncture influences the central and peripheral nervous system. Evidence shows it releases endorphins from the brain which make acupuncture particularly effective in pain control. Acupuncture primarily affects sugar, cholesterol, and triglyceride levels in the blood, the functioning of the gastrointestinal system, and the activity of the endocrine system.</p>
+				</div>
+				<div class="text-right">
+					<p>Alongside acupuncture, Dr. Hu also practices herbal medicine. Herbal medicine is the main treatment method within traditional Chinese medicine (TCM). TCM is the world's oldest continually practiced professional medicine. Its written history stretches back over 2,500 years and its practice probably much longer than that. It utilizes naturally available herbs from our living environment to treat dysfunctions and diseases, rather than synthesize from chemicals. This keeps side effects at the bare minimum.</p>
+					<p>Although acupuncture was the first Chinese method of treatment to gain wide acceptance in the west, Chinese herbal medicine is quickly establishing itself as one of the most popular and effective alternative therapies in the west.</p>
+					<p>Chinese herbal medicine is based on a highly developed integrative approach to diagnose and treat medical conditions. All the diagnoses are made from the subtle signs and symptoms your body reveals.</p>
+					<p>Dr. Hu will feel the subtle variations in the pulse in your wrist to determine how each organ in your body is functioning. The sound of your voice, the condition and appearance of your tongue, face and skin, and your emotions are all important indicators of your condition. Herbs will be formulated according to your diagnosis specifically.</p>
+				</div>
+				<div class="clearer"></div>
+				<div class="checklist-image">
+					<img src="Acu.jpg" alt="" />
+				</div>
+				<ul class="checklist">
+					<li>Abdominal pain</li>
+					<li>Allergy symptoms</li>
+					<li>Chemotherapy effects</li>
+					<li>Dental pain</li>
+					<li>Depression</li>
+					<li>Dysentery</li>
+					<li>Facial pain</li>
+					<li>Fetal malposition</li>
+					<li>Headaches</li>
+				</ul>
+				<ul class="checklist">
+					<li>Hyper- and hypotension</li>
+					<li>Induction of labour</li>
+					<li>Irritable bowel syndrome</li>
+					<li>Kidney stones/Gallstones</li>
+					<li>Knee pain</li>
+					<li>Leukopenia</li>
+					<li>Low back pain</li>
+					<li>Menstrual pain</li>
+					<li>Morning sickness</li>
+				</ul>
+				<ul class="checklist">
+					<li>Nausea and vomiting</li>
+					<li>Neck pain</li>
+					<li>Periarthritis of shoulder</li>
+					<li>Postoperative pain</li>
+					<li>Rheumatoid arthritis</li>
+					<li>Sciatica</li>
+					<li>Sprain</li>
+					<li>Stroke</li>
+					<li>Tennis elbow</li>
+				</ul>
+				<div class="clearer"></div>
+			</div>
+		</div>
+		<div class="panel" id="reviews">
+			<div class="panel-inner">
+				<h2 class="panel-title"><span>Reviews</span></h2>
+				<blockquote>
+					The acupuncture was extremely helpful. One treatment made 1,000% difference. Before I came for treatment I could not stand straight and could hardly walk. Now I can walk and move around without pain.
+				</blockquote>
+				<span>- H.J. (Lower back pain)</span>
+				<blockquote>
+					I was diagnosed with osteo-arthritis 10 years ago, and was in constant pain for the last 2 years. Before I came to Dr. Hu the pain was excruciating. After my first treatment with him I left feeling better and slept through the night that evening. This is the first time I have actually had relief of my pain in 2 years!
+				</blockquote>
+				<span>- D.R. (Arthritis)</span>
+				<blockquote>
+					I tore the tendon of my left foot at the heel. When I came to Dr. Hu about 6 months after having unsuccessful cortisone treatments, my pain was 100 on a scale of 1-10! Before my acupuncture treatments I could barely walk. Now I walk briskly. I am now 90% better. I was facing surgery and Dr. Hu turned this around for me.
+				</blockquote>
+				<span>- B.M. (Torn tendon)</span>
+				<blockquote>
+					After Dr. Hu put the needles in I had no pain! I could not believe it... no pain at all. When I came into Dr. Hu's, the pain was a 10 on a scale of 1-10, when I left it was a 0. This Dr. Hu created a miracle -- he has helped me so much.
+				</blockquote>
+				<span>- C.R. (Arthritis and severe headaches)</span>
+				<blockquote>
+					I had constant pain in my left hip, thigh and calf for sixteen months. I tried everything I could think of. When I found Dr. Hu, I began to have relief from the first week on. After 10 visits I have no pain. I am very grateful.
+				</blockquote>
+				<span>- M.M. (Leg pain)</span>
+				<blockquote>
+					My first experience with this type of procedure was great. I never expected the results that I got after the first treatment. I highly recommend Dr. Hu and his experience to others.
+				</blockquote>
+				<span>- V.K. (Leg pain)</span>
+			</div>
+		</div>
+		<div class="panel" id="contact">
+			<div class="panel-inner">
+				<h2 class="panel-title"><span>Contact</span></h2>
+				<ul class="horizontal-list">
+					<li>
+						<div class="icon-wrapper">
+							<i class="fa fa-circle"></i>
+							<i class="fa fa-building-o"></i>
+						</div>
+						<br />
+<span class="contact-info">
+							50 Leanni Way, Unit A2 <br />
+							Palm Coast, FL 32137
+						</span>
+					</li>
+					<li>
+						<div class="icon-wrapper">
+							<i class="fa fa-circle"></i>
+							<i class="fa fa-phone"></i>
+						</div>
+						<br />
+						<span class="contact-info">
+							Palm Coast: <br />
+							(386) 445-0098
+						</span>
+					</li>
+					<li>
+						<div class="icon-wrapper">
+							<i class="fa fa-circle"></i>
+							<i class="fa fa-envelope"></i>
+						</div>
+						<br />
+						<span class="contact-info">
+							&#121;&#111;&#117;&#99;&#104;&#97;&#110;&#103;&#104;&#117;<span class="email">encode</span>&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;
+						</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
