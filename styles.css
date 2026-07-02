@@ -275,10 +275,31 @@ svg[viewBox] { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap
 	flex-wrap: wrap;
 	gap: 0.9rem;
 }
-.hero-meta {
-	margin-top: 1.8rem;
-	font-size: 0.8rem;
-	letter-spacing: 0.14em;
+/* Trust stats under the hero actions */
+.hero-trust {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.75rem;
+	margin: 2.2rem 0 0;
+	padding: 1.4rem 0 0;
+	border-top: 1px solid var(--line);
+}
+.hero-trust li {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+.trust-num {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: 1.7rem;
+	line-height: 1.1;
+	color: var(--green);
+}
+.trust-label {
+	font-size: 0.72rem;
+	letter-spacing: 0.07em;
 	text-transform: uppercase;
 	color: var(--ink-soft);
 }
@@ -289,6 +310,44 @@ svg[viewBox] { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap
 	aspect-ratio: 5 / 6;
 	max-width: 470px;
 	margin-inline: auto;
+}
+.hero-badge {
+	position: absolute;
+	left: clamp(-0.5rem, -2vw, -1.5rem);
+	bottom: 2.2rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.05rem;
+	width: 128px;
+	height: 128px;
+	border-radius: 50%;
+	background: var(--surface);
+	border: 1px solid var(--accent-soft);
+	box-shadow: var(--shadow);
+	text-align: center;
+	transform: rotate(-6deg);
+}
+.hero-badge-num {
+	font-size: 0.68rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--accent);
+	font-weight: 600;
+}
+.hero-badge-year {
+	font-family: var(--font-display);
+	font-weight: 600;
+	font-size: 2rem;
+	line-height: 1;
+	color: var(--green-dark);
+}
+.hero-badge-sub {
+	font-size: 0.62rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
 }
 /* Eyebrows */
 .eyebrow {
@@ -412,8 +471,25 @@ h1 em, h2 em, h3 em {
 .how-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	gap: clamp(2rem, 5vw, 4rem);
+	gap: clamp(1.5rem, 3vw, 2.5rem);
 }
+.how-col {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-soft);
+	padding: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+.how-icon {
+	display: grid;
+	place-items: center;
+	width: 56px; height: 56px;
+	margin-bottom: 1.3rem;
+	border-radius: 16px;
+	background: var(--bg-alt);
+	color: var(--green);
+}
+.how-icon svg { width: 26px; height: 26px; }
 .how-col h3 {
 	position: relative;
 	padding-bottom: 0.9rem;
@@ -487,6 +563,15 @@ h1 em, h2 em, h3 em {
 	flex-direction: column;
 	gap: 1rem;
 }
+.stars {
+	display: flex;
+	gap: 3px;
+}
+.stars .star {
+	width: 16px; height: 16px;
+	fill: var(--accent-soft);
+	stroke: none;
+}
 .review blockquote {
 	margin: 0;
 	font-family: var(--font-display);
@@ -494,18 +579,6 @@ h1 em, h2 em, h3 em {
 	font-style: italic;
 	line-height: 1.5;
 	color: #fff;
-	position: relative;
-	padding-top: 1.6rem;
-}
-.review blockquote::before {
-	content: "\201C";
-	position: absolute;
-	top: -0.6rem; left: -0.3rem;
-	font-family: var(--font-display);
-	font-size: 3.5rem;
-	line-height: 1;
-	color: var(--accent);
-	opacity: 0.85;
 }
 .review figcaption {
 	font-weight: 600;
@@ -578,7 +651,7 @@ h1 em, h2 em, h3 em {
 .cta-band {
 	background:
 		linear-gradient(rgba(33,66,45,0.92), rgba(33,66,45,0.92)),
-		url("images/bamboobg.jpg") center / cover fixed;
+		url("images/bamboobg.jpg") center / cover;
 	color: #fff;
 	text-align: center;
 	padding-block: clamp(3.5rem, 8vw, 5.5rem);
@@ -654,6 +727,13 @@ h1 em, h2 em, h3 em {
 	.hero-lead { margin-inline: auto; }
 	.hero-actions { justify-content: center; }
 	.hero-arch { max-width: 340px; }
+	.hero-trust { justify-content: center; gap: 0 2rem; }
+	.hero-badge {
+		left: calc(50% - 170px - 0.5rem);
+		bottom: 1rem;
+		width: 106px; height: 106px;
+	}
+	.hero-badge-year { font-size: 1.6rem; }
 	.doctor-portrait { margin-inline: auto; }
 	.doctor { text-align: center; }
 	.conditions-layout { grid-template-columns: 1fr; }
@@ -722,6 +802,10 @@ h1 em, h2 em, h3 em {
 	.conditions-list { columns: 1; }
 	.btn { width: 100%; justify-content: center; }
 	.hero-actions { width: 100%; }
+	.hero-trust { gap: 0; }
+	.hero-trust li { flex: 1; align-items: center; text-align: center; }
+	.trust-num { font-size: 1.4rem; }
+	.trust-label { font-size: 0.6rem; letter-spacing: 0.05em; }
 }
 
 /* ---------- Reduced motion ---------- */
